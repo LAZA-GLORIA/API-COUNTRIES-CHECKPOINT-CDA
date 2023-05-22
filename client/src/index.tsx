@@ -1,15 +1,50 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  redirect,
+} from "react-router-dom";
+import { ApolloProvider } from "@apollo/client";
+import App from "./App";
+import client from "./gql/client";
+import ContinentsPage from "./routes/continents";
+import CountryPage from "./routes/countries/[id]";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "continents",
+        element: <ContinentsPage />,
+        children: [
+          {
+            path: ":continentId",
+            element: <ContinentsPage />,
+          },
+        ],
+      },
+      {
+        path: ":countryId",
+        element: <CountryPage />,
+      },
+    ],
+  },
+]);
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
   </React.StrictMode>
 );
 
